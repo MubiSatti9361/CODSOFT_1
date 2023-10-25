@@ -1,0 +1,36 @@
+# Import necessary libraries
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+
+# Load the training data
+train_data = pd.read_csv('train_data.csv')
+
+# Load the test data
+test_data = pd.read_csv('test_data.csv')
+
+# Separate features (plot summaries) and labels (genres) for training data
+X_train = train_data['DESCRIPTION']
+y_train = train_data['GENRE']
+
+# Separate features (plot summaries) for test data
+X_test = test_data['DESCRIPTION']
+
+# Initialize TF-IDF Vectorizer
+tfidf_vectorizer = TfidfVectorizer(max_features=5000)  # You can adjust max_features as needed
+
+# Transform training and test data
+X_train_tfidf = tfidf_vectorizer.fit_transform(X_train)
+X_test_tfidf = tfidf_vectorizer.transform(X_test)
+
+# Initialize and train the Logistic Regression model
+model = LogisticRegression()
+model.fit(X_train_tfidf, y_train)
+
+# Predict genres for test data
+y_pred = model.predict(X_test_tfidf)
+
+# Print classification report
+print(classification_report(y_true, y_pred))
